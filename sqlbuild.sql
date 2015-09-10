@@ -7,38 +7,33 @@
 -- these lines here.
 
 -- Drop tournament if old one exists
-DROP DATABASE IF EXISTS tournament;
+DROP DATABASE IF EXISTS ziplab;
 
 -- Drop any old tables
 DROP TABLE IF EXISTS players CASCADE;
 DROP TABLE IF EXISTS matches CASCADE;
 
 -- Create a new tournament database
-create database tournament;
+create database ziplab;
 
 -- Connect to the database
- \c tournament
+ \c ziplab
 
- --Create the players table
-	create table players (
+ --Create zip basic info
+	create zip (
 		id SERIAL PRIMARY KEY,
-		name text);
+		zip INTEGER,
+		county TEXT,
+		name TEXT,
+		submarket TEXT,
+		samplecount INTEGER,
+		samplebase);
 
---Create matches table with references to players table
-	create table matches (
+--Create table with zip traffic information
+	create table traffic (
 		id SERIAL PRIMARY KEY,
-		p1 INTEGER REFERENCES players,
-		p2 INTEGER REFERENCES players,
-		winner INTEGER REFERENCES players
-		);
+		ave_calls INTEGER,
+		ave_sms INTEGER,
+		ave_mb INTEGER);
 
---Create a view of player id, name, and matches.
-	CREATE VIEW num_matches as select players.id, players.name, 
-	count (matches.id) as matches from players left join matches 
-	on  players.id = matches.p1 or players.id = matches.p2 
-	group by players.id;
 
---Create a view of player id and number of wins.
-	CREATE VIEW num_wins as SELECT players.id, count(matches.winner) 
-	as wins FROM players left join matches on players.id = matches.winner 
-	GROUP by players.id order by wins desc;
